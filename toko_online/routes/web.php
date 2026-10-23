@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderHistoryController;
+use App\Http\Controllers\StatelessCartController;
+
+
 
 Route::get('/', [ProductController::class, 'index'])->name('products.index');
 
@@ -29,3 +32,13 @@ Route::middleware('auth')->group(function () {
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/riwayat-pesanan', [OrderHistoryController::class, 'index'])->name('orders.index');
+
+Route::get('/stateless-shop', [StatelessCartController::class, 'index'])
+    ->name('stateless.shop');
+
+Route::post('/stateless-cart/add', [StatelessCartController::class, 'add'])
+    ->name('stateless.cart.add');
+
+Route::post('/stateless-cart/update', [StatelessCartController::class, 'update'])
+    ->name('stateless.cart.update');
+
