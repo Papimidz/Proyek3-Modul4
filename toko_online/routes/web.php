@@ -7,8 +7,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderHistoryController;
 use App\Http\Controllers\StatelessCartController;
-
-
+use App\Http\Controllers\RoleController;
 
 Route::get('/', [ProductController::class, 'index'])->name('products.index');
 
@@ -20,14 +19,16 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
 Route::middleware('auth')->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+
+    Route::post('/cart/add', [CartController::class, 'add'])
+        ->middleware('can:use-cart')
+        ->name('cart.add');
+
     Route::put('/cart/{id_barang}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/{id_barang}', [CartController::class, 'remove'])->name('cart.remove');
 });
-
 
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
@@ -42,3 +43,11 @@ Route::post('/stateless-cart/add', [StatelessCartController::class, 'add'])
 Route::post('/stateless-cart/update', [StatelessCartController::class, 'update'])
     ->name('stateless.cart.update');
 
+Route::patch('/admin/users/{user}/role', [RoleController::class, 'update'])
+    ->middleware(['auth', 'can:manage-roles'])
+    ->name('admin.users.role.update');
+
+Route::get('/admin/role-test', function () {
+    return view('admin.role-test');
+})->middleware(['auth', 'can:manage-roles'])
+  ->name('admin.role-test');
